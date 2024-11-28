@@ -1,18 +1,15 @@
-import io
 import sys
 
 import random
 
-from PyQt6 import uic
 from PyQt6.QtWidgets import QApplication, QMainWindow
 from PyQt6.QtGui import QPainter, QColor, QPaintEvent
 from PyQt6.QtCore import QPointF
 
-with open('UI.ui', 'r', encoding='utf-8') as ui:
-    template = ''.join(map(lambda ln: ln.strip(), ui.readlines().copy()))
+from main_ui import Ui_MainWindow
 
 
-class Main(QMainWindow):
+class Main(QMainWindow, Ui_MainWindow):
     """
     mini PyQt6 app
     """
@@ -22,8 +19,7 @@ class Main(QMainWindow):
         init window
         """
         super().__init__()
-        f = io.StringIO(template)
-        uic.loadUi(f, self)
+        self.setupUi(self)
 
         self.setFixedSize(800, 600)
 
@@ -56,6 +52,16 @@ class Main(QMainWindow):
         return (random.randint(0, self.width()),
                 random.randint(0, self.height()))
 
+    def get_random_color(self) -> tuple[int, int, int]:
+        """
+        return random color (RGB)
+        :return: tuple[int, int, int]
+        """
+
+        return (random.randint(0, 255),
+                random.randint(0, 255),
+                random.randint(0, 255))
+
     def paintEvent(self, event: QPaintEvent) -> None:
         """
         draw ellipse
@@ -67,7 +73,7 @@ class Main(QMainWindow):
             self.qp.begin(self)
 
             size = random.randint(20, 100)
-            self.qp.setBrush(QColor(255, 255, 0))
+            self.qp.setBrush(QColor(*self.get_random_color()))
 
             self.qp.drawEllipse(QPointF(*self.get_random_pos()),
                                 size, size)
